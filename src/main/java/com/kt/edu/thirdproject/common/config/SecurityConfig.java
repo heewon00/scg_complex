@@ -37,7 +37,7 @@ public class SecurityConfig {
 
         return http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/login","/h2-console/**")
+                        .pathMatchers("/api/login","/h2-console/**","/actuator/**")
                         .permitAll()
                         .anyExchange().authenticated()
                 )
@@ -48,60 +48,4 @@ public class SecurityConfig {
                 .cors(ServerHttpSecurity.CorsSpec::disable)
                 .build();
     }
-/*
-    @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.csrf().disable()
-                .cors().disable()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance()) //session STATELESS
-                .exceptionHandling()
-                .authenticationEntryPoint(serverAuthenticationEntryPoint())
-                .and()
-                .authorizeExchange()
-                .pathMatchers(NO_AUTH_LIST)
-                .permitAll()
-                .anyExchange()
-                .authenticated()
-                .and()
-                .anonymous().disable()
-                .logout().disable()
-                .headers()
-                .frameOptions()
-                .mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN)
-                .and()
-                .addFilterBefore(authenticationWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-        ;
-        return http.build();
-    }
-
-    private ServerAuthenticationEntryPoint serverAuthenticationEntryPoint(){
-        return (exchange, authEx) -> {
-            String requestPath = exchange.getRequest().getPath().value();
-
-            log.error("Unauthorized error: {}", authEx.getMessage());
-            log.error("Requested path    : {}", requestPath);
-
-            ServerHttpResponse serverHttpResponse = exchange.getResponse();
-            serverHttpResponse.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
-
-            ErrorMessage errorMessage = new ErrorMessage(HttpStatus.UNAUTHORIZED.value()
-                    , LocalDateTime.now()
-                    , authEx.getMessage()
-                    , requestPath);
-
-            try {
-                byte[] errorByte = new ObjectMapper()
-                        .registerModule(new JavaTimeModule())
-                        .writeValueAsBytes(errorMessage);
-                DataBuffer dataBuffer = serverHttpResponse.bufferFactory().wrap(errorByte);
-                return serverHttpResponse.writeWith(Mono.just(dataBuffer));
-            } catch (JsonProcessingException e) {
-                log.error(e.getMessage(), e);
-                return serverHttpResponse.setComplete();
-            }
-        };
-    }*/
 }

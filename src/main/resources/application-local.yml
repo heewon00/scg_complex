@@ -14,11 +14,6 @@ spring:
     init:
       platform: h2
       mode: embedded
-#r2dbc
-  r2dbc:
-    url: r2dbc:h2:mem:///test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
 
 
 # spring boot - actuator expose
@@ -31,14 +26,35 @@ management:
       enabled: true  
     prometheus:
       enabled: true
+    gateway:
+      enabled: true
     web:
       exposure:
-        include: health,prometheus,loggers,metrics,caches,beans
+        include: "*"
   endpoint:
     health:
       probes:
         enabled: true
 
+#circuitbreaker
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      registerHealthIndicator: true
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 10 # {통계건수}
+      minimumNumberOfCalls: 10 # {최소요청횟수}
+      failureRateThreshold: 60 # {실패율}
+      slowCallRateThreshold: 60 # {느린요청비율}
+      slowCallDurationThreshold: 3000 # {느린요청으로 간주할 시간}
+      permittedNumberOfCallsInHalfOpenState: 2
+      waitDurationInOpenState: 5s # {Circuit Breaker유지시간}
+      eventConsumerBufferSize: 10
+  instances:
+    apigw:
+      baseConfig: default
+    testcirguitbreaker:
+      baseConfig: default
 
 # app
 app-info:
@@ -58,9 +74,6 @@ springdoc:
 
 logging:
   level:
-    com.kt.edu: trace
-    org:
-      springframework:
-        r2dbc:
-          core:
-            DefaultDatabaseClient: debug
+    com.kt.edu: debug
+    org.springframework.cloud.gateway: debug
+

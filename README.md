@@ -1,17 +1,12 @@
-# springboot_cqrs_query_webflux_security
+# springboot_gw_complex
 
 ***
 
-- JWT 추가
-- SpringBoot Webflux : 3.2.1
-  - AOP 추가
+- SpringBoot Gateway 
   - LogFilter 추가
-  - H2 R2DBC
-  - Router Function 추가
-  - Handler Function 추가
-
-local : SpringBoot +  QUERY + WEBFLUX + H2 
-
-prd : SpringBoot +  QUERY + WEBFLUX + MariaDB
-
+  - JWT 추가
+  - Spring Webflux 
+  - AOP 추가
+  - RSA 복호화
+  
 ***
